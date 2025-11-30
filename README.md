@@ -1,12 +1,12 @@
 <div align="center">
 <h1>RDB - Relational Database with JSON Query Language</h1>
 
-<a href="https://github.com/muhammad-fiaz/rdb"><img src="https://img.shields.io/github/stars/muhammad-fiaz/rdb" alt="GitHub stars"></a>
-<a href="https://github.com/muhammad-fiaz/rdb/issues"><img src="https://img.shields.io/github/issues/muhammad-fiaz/rdb" alt="GitHub issues"></a>
-<a href="https://github.com/muhammad-fiaz/rdb/pulls"><img src="https://img.shields.io/github/issues-pr/muhammad-fiaz/rdb" alt="GitHub pull requests"></a>
-<a href="https://github.com/muhammad-fiaz/rdb"><img src="https://img.shields.io/github/last-commit/muhammad-fiaz/rdb" alt="GitHub last commit"></a>
-<a href="https://github.com/muhammad-fiaz/rdb/releases"><img src="https://img.shields.io/github/v/release/muhammad-fiaz/rdb" alt="GitHub release"></a>
-<a href="https://github.com/muhammad-fiaz/rdb"><img src="https://img.shields.io/github/license/muhammad-fiaz/rdb" alt="License"></a>
+<a href="https://github.com/muhammad-fiaz/RDB"><img src="https://img.shields.io/github/stars/muhammad-fiaz/RDB" alt="GitHub stars"></a>
+<a href="https://github.com/muhammad-fiaz/RDB/issues"><img src="https://img.shields.io/github/issues/muhammad-fiaz/RDB" alt="GitHub issues"></a>
+<a href="https://github.com/muhammad-fiaz/RDB/pulls"><img src="https://img.shields.io/github/issues-pr/muhammad-fiaz/RDB" alt="GitHub pull requests"></a>
+<a href="https://github.com/muhammad-fiaz/RDB"><img src="https://img.shields.io/github/last-commit/muhammad-fiaz/RDB" alt="GitHub last commit"></a>
+<a href="https://github.com/muhammad-fiaz/RDB/releases"><img src="https://img.shields.io/github/v/release/muhammad-fiaz/RDB" alt="GitHub release"></a>
+<a href="https://github.com/muhammad-fiaz/RDB"><img src="https://img.shields.io/github/license/muhammad-fiaz/RDB" alt="License"></a>
 <a href="https://www.rust-lang.org/"><img src="https://img.shields.io/badge/rust-1.70%2B-orange" alt="Rust"></a>
 <a href="https://github.com/muhammad-fiaz/RDB/actions/workflows/deploy-docs.yml"><img src="https://github.com/muhammad-fiaz/RDB/actions/workflows/deploy-docs.yml/badge.svg" alt="Build Docs"></a>
 
@@ -22,24 +22,24 @@ RDB is a modern relational database that combines the power of traditional SQL d
 
 ## 📥 Installation
 
-Download the latest release from [GitHub Releases](https://github.com/muhammad-fiaz/rdb/releases).
+Download the latest release from [GitHub Releases](https://github.com/muhammad-fiaz/RDB/releases).
 
 ### Quick Install
 
 | Platform | Method | Command |
 |----------|--------|---------|
-| **Linux (x86_64)** | Direct Download | `wget https://github.com/muhammad-fiaz/rdb/releases/latest/download/rdb-linux-x86_64 && chmod +x rdb-linux-x86_64 && sudo mv rdb-linux-x86_64 /usr/local/bin/rdb` |
-| **macOS (Intel)** | Direct Download | `curl -L https://github.com/muhammad-fiaz/rdb/releases/latest/download/rdb-macos-x86_64 -o rdb && chmod +x rdb && sudo mv rdb /usr/local/bin/` |
-| **macOS (Apple Silicon)** | Direct Download | `curl -L https://github.com/muhammad-fiaz/rdb/releases/latest/download/rdb-macos-aarch64 -o rdb && chmod +x rdb && sudo mv rdb /usr/local/bin/` |
+| **Linux (x86_64)** | Direct Download | `wget https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-linux-x86_64 && chmod +x rdb-linux-x86_64 && sudo mv rdb-linux-x86_64 /usr/local/bin/rdb` |
+| **macOS (Intel)** | Direct Download | `curl -L https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-macos-x86_64 -o rdb && chmod +x rdb && sudo mv rdb /usr/local/bin/` |
+| **macOS (Apple Silicon)** | Direct Download | `curl -L https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-macos-aarch64 -o rdb && chmod +x rdb && sudo mv rdb /usr/local/bin/` |
 | **Windows (x64)** | Direct Download | Download `rdb-windows-x86_64.exe` and add to PATH |
-| **Any Platform** | From Source | `cargo install --git https://github.com/muhammad-fiaz/rdb` |
+| **Any Platform** | From Source | `cargo install --git https://github.com/muhammad-fiaz/RDB` |
 
 ### Detailed Installation
 
 #### Linux
 ```bash
 # Download
-wget https://github.com/muhammad-fiaz/rdb/releases/latest/download/rdb-linux-x86_64
+wget https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-linux-x86_64
 
 # Make executable
 chmod +x rdb-linux-x86_64
@@ -54,10 +54,10 @@ rdb --version
 #### macOS
 ```bash
 # Intel Macs
-curl -L https://github.com/muhammad-fiaz/rdb/releases/latest/download/rdb-macos-x86_64 -o rdb
+curl -L https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-macos-x86_64 -o rdb
 
 # Apple Silicon Macs
-curl -L https://github.com/muhammad-fiaz/rdb/releases/latest/download/rdb-macos-aarch64 -o rdb
+curl -L https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-macos-aarch64 -o rdb
 
 # Make executable and move to PATH
 chmod +x rdb
@@ -166,17 +166,17 @@ curl http://localhost:8080/
 
 ### Get Help
 - 📖 **Docs:** https://muhammad-fiaz.github.io/RDB/
-- 🐛 **Issues:** https://github.com/muhammad-fiaz/rdb/issues
-- 💬 **Discussions:** https://github.com/muhammad-fiaz/rdb/discussions
+- 🐛 **Issues:** https://github.com/muhammad-fiaz/RDB/issues
+- 💬 **Discussions:** https://github.com/muhammad-fiaz/RDB/discussions
 
-If you encounter any database errors, please report them at: https://github.com/muhammad-fiaz/rdb/issues
+If you encounter any database errors, please report them at: https://github.com/muhammad-fiaz/RDB/issues
 
 ## 📝 Changelog
 
-Visit [GitHub Releases](https://github.com/muhammad-fiaz/rdb/releases) for detailed changes.
+Visit [GitHub Releases](https://github.com/muhammad-fiaz/RDB/releases) for detailed changes.
 
 ## 📄 License
 
-Licensed under the Apache License 2.0 - see [LICENSE](https://github.com/muhammad-fiaz/rdb/blob/main/LICENSE) for details.
+Licensed under the Apache License 2.0 - see [LICENSE](https://github.com/muhammad-fiaz/RDB/blob/main/LICENSE) for details.
 
 
