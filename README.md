@@ -1,4 +1,5 @@
 <div align="center">
+<h1>RDB</h1>
 
 <a href="https://github.com/muhammad-fiaz/rdb"><img src="https://img.shields.io/github/stars/muhammad-fiaz/rdb" alt="GitHub stars"></a>
 <a href="https://github.com/muhammad-fiaz/rdb/issues"><img src="https://img.shields.io/github/issues/muhammad-fiaz/rdb" alt="GitHub issues"></a>
