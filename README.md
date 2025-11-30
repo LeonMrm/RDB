@@ -11,7 +11,7 @@
 
 <p><em>High-performance, JSON-based relational database built entirely in Rust.</em></p>
 
-**📚 [Documentation](docs/) | [Quick Start](docs/src/introduction.md)**
+**📚 [Documentation](https://muhammad-fiaz.github.io/RDB/) | [Quick Start](https://muhammad-fiaz.github.io/RDB/introduction.html)**
 
 </div>
 
@@ -164,7 +164,7 @@ curl http://localhost:8080/
 ```
 
 ### Get Help
-- 📖 **Docs:** https://github.com/muhammad-fiaz/rdb/tree/main/docs
+- 📖 **Docs:** https://muhammad-fiaz.github.io/RDB/
 - 🐛 **Issues:** https://github.com/muhammad-fiaz/rdb/issues
 - 💬 **Discussions:** https://github.com/muhammad-fiaz/rdb/discussions
 
@@ -178,5 +178,4 @@ Visit [GitHub Releases](https://github.com/muhammad-fiaz/rdb/releases) for detai
 
 Licensed under the Apache License 2.0 - see [LICENSE](https://github.com/muhammad-fiaz/rdb/blob/main/LICENSE) for details.
 
-**Full documentation:** https://github.com/muhammad-fiaz/rdb/tree/main/docs
 
