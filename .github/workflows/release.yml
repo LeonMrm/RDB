@@ -1,4 +1,4 @@
-name: Release
+name: RDB Release
 
 on:
   release:
@@ -8,303 +8,196 @@ permissions:
   contents: write
 
 jobs:
-  create-release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
-      version: ${{ steps.get_version.outputs.version }}
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact_name: rdb
+            asset_name: rdb-linux-x86_64
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            artifact_name: rdb
+            asset_name: rdb-linux-x86_64-musl
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact_name: rdb.exe
+            asset_name: rdb-windows-x86_64
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: rdb
+            asset_name: rdb-macos-x86_64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact_name: rdb
+            asset_name: rdb-macos-aarch64
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get version from tag
-        id: get_version
-        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
 
-      - name: Generate Changelog
-        id: changelog
+      - name: Install musl dependencies (musl target)
+        if: matrix.target == 'x86_64-unknown-linux-musl'
         run: |
-          echo "## ✨ What's New" > changelog.md
-          if git describe --tags --abbrev=0 HEAD^ > /dev/null 2>&1; then
-            git log --pretty=format:"%s (%h)" $(git describe --tags --abbrev=0 HEAD^)..HEAD >> changelog.md
-          else
-            git log --pretty=format:"%s (%h)" --max-count=20 >> changelog.md
-          fi
-          # Publish changelog as a multiline workflow output using the supported
-          # GITHUB_OUTPUT heredoc syntax. This avoids invalid-format errors when
-          # the changelog contains newlines or special characters.
-          echo 'content<<EOF' >> $GITHUB_OUTPUT
-          cat changelog.md >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
+          sudo apt-get update
+          sudo apt-get install -y musl-dev musl-tools libssl-dev pkg-config
 
-      - name: Create Release
-        id: create_release
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Strip binary (Unix)
+        if: matrix.os != 'windows-latest'
+        run: strip target/${{ matrix.target }}/release/${{ matrix.artifact_name }} || true
+
+      - name: Create archive (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd target/${{ matrix.target }}/release
+          tar czf ${{ matrix.asset_name }}.tar.gz ${{ matrix.artifact_name }}
+          mv ${{ matrix.asset_name }}.tar.gz ../../../
+
+      - name: Create archive (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          cd target/${{ matrix.target }}/release
+          Compress-Archive -Path ${{ matrix.artifact_name }} -DestinationPath ../../../${{ matrix.asset_name }}.zip
+
+      - name: Upload artifact (Unix)
+        if: matrix.os != 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: ${{ matrix.asset_name }}.tar.gz
+
+      - name: Upload artifact (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: ${{ matrix.asset_name }}.zip
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Verify all artifacts downloaded
+        run: |
+          echo "Checking for required artifacts..."
+          ls -la artifacts/
+          REQUIRED_ARTIFACTS=(
+            "rdb-linux-x86_64"
+            "rdb-linux-x86_64-musl"
+            "rdb-windows-x86_64"
+            "rdb-macos-x86_64"
+            "rdb-macos-aarch64"
+          )
+
+          for artifact in "${REQUIRED_ARTIFACTS[@]}"; do
+            if [ -f "artifacts/${artifact}/${artifact}.tar.gz" ] || [ -f "artifacts/${artifact}/${artifact}.zip" ]; then
+              echo "✓ Found artifact: ${artifact}"
+            else
+              echo "✗ Missing artifact: ${artifact}"
+              exit 1
+            fi
+          done
+          echo "All artifacts verified successfully"
+
+      - name: Extract version from release
+        id: get_version
+        run: |
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          VERSION="${TAG_NAME#v}"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          TAG_NAME=${{ steps.get_version.outputs.TAG_NAME }}
+          echo "Generating release notes for version $VERSION"
+
+          cat > release_notes.md << EOF
+          # RDB v$VERSION
+
+          Release of the `rdb` crate and binaries for multiple platforms.
+
+          ## What's New
+
+          ### ✨ Highlights
+          EOF
+
+          if git describe --tags --abbrev=0 HEAD~1 >/dev/null 2>&1; then
+            LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1)
+            echo "Generating changelog from $LAST_TAG to $TAG_NAME"
+            git log --pretty=format:"%s" $LAST_TAG..HEAD | while read -r line; do
+              if [[ ! "$line" =~ ^Merge ]]; then
+                echo "- $line" >> release_notes.md
+              fi
+            done
+          else
+            echo "First release, including recent commits"
+            git log --pretty=format:"%s" | head -50 | while read -r line; do
+              if [[ ! "$line" =~ ^Merge ]]; then
+                echo "- $line" >> release_notes.md
+              fi
+            done
+          fi
+
+          cat >> release_notes.md << 'EOF'
+
+          ## 📦 Installation
+
+          ### Via Cargo (Recommended)
+          ```bash
+          cargo install rdb
+          ```
+
+          ### Downloadable Binaries (attached to this release)
+
+          | Platform | Architecture | Filename | Direct link |
+          |----------|--------------|----------|-------------|
+          | Linux (GNU) | x86_64 | `rdb-linux-x86_64.tar.gz` | https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/rdb-linux-x86_64.tar.gz |
+          | Linux (musl) | x86_64 | `rdb-linux-x86_64-musl.tar.gz` | https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/rdb-linux-x86_64-musl.tar.gz |
+          | Windows | x86_64 | `rdb-windows-x86_64.zip` | https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/rdb-windows-x86_64.zip |
+          | macOS | x86_64 (Intel) | `rdb-macos-x86_64.tar.gz` | https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/rdb-macos-x86_64.tar.gz |
+          | macOS | aarch64 (Apple Silicon) | `rdb-macos-aarch64.tar.gz` | https://github.com/${{ github.repository }}/releases/download/${TAG_NAME}/rdb-macos-aarch64.tar.gz |
+
+          ## 🚀 Quick Start
+
+          ```bash
+          rdb --help
+          ```
+
+          EOF
+
+      - name: Update Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          name: RDB v${{ steps.get_version.outputs.version }}
-          body: |
-            # 🚀 RDB v${{ steps.get_version.outputs.version }}
-            
-            High-performance JSON-based relational database built in Rust.
-            
-            ---
-            
-            ## 📥 Installation
-            
-            ### Quick Install
-            
-            | Platform | Method | Command |
-            |----------|--------|---------|
-            | **Linux (x86_64)** | Direct Download | `wget https://github.com/muhammad-fiaz/RDB/releases/download/v${{ steps.get_version.outputs.version }}/rdb-linux-x86_64 && chmod +x rdb-linux-x86_64 && sudo mv rdb-linux-x86_64 /usr/local/bin/rdb` |
-            | **macOS (Intel)** | Direct Download | `curl -L https://github.com/muhammad-fiaz/RDB/releases/download/v${{ steps.get_version.outputs.version }}/rdb-macos-x86_64 -o rdb && chmod +x rdb && sudo mv rdb /usr/local/bin/` |
-            | **macOS (Apple Silicon)** | Direct Download | `curl -L https://github.com/muhammad-fiaz/RDB/releases/download/v${{ steps.get_version.outputs.version }}/rdb-macos-aarch64 -o rdb && chmod +x rdb && sudo mv rdb /usr/local/bin/` |
-            | **Windows (x64)** | Direct Download | Download `rdb-windows-x86_64.exe` and add to PATH |
-            | **Any Platform** | From Source | `cargo install --git https://github.com/muhammad-fiaz/RDB` |
-            
-            ### Detailed Installation
-            
-            #### Linux
-            ```bash
-            # Download
-            wget https://github.com/muhammad-fiaz/RDB/releases/download/v${{ steps.get_version.outputs.version }}/rdb-linux-x86_64
-            
-            # Make executable
-            chmod +x rdb-linux-x86_64
-            
-            # Move to PATH
-            sudo mv rdb-linux-x86_64 /usr/local/bin/rdb
-            
-            # Verify
-            rdb --version
-            ```
-            
-            #### macOS
-            ```bash
-            # Intel Macs
-            curl -L https://github.com/muhammad-fiaz/RDB/releases/download/v${{ steps.get_version.outputs.version }}/rdb-macos-x86_64 -o rdb
-            
-            # Apple Silicon Macs
-            curl -L https://github.com/muhammad-fiaz/RDB/releases/download/v${{ steps.get_version.outputs.version }}/rdb-macos-aarch64 -o rdb
-            
-            # Make executable and move to PATH
-            chmod +x rdb
-            sudo mv rdb /usr/local/bin/
-            
-            # Verify
-            rdb --version
-            ```
-            
-            #### Windows
-            ```powershell
-            # Download rdb-windows-x86_64.exe from assets below
-            
-            # Move to a directory in your PATH, e.g.:
-            Move-Item rdb-windows-x86_64.exe C:\Windows\System32\rdb.exe
-            
-            # Or create a dedicated directory:
-            New-Item -ItemType Directory -Path "C:\Program Files\RDB"
-            Move-Item rdb-windows-x86_64.exe "C:\Program Files\RDB\rdb.exe"
-            
-            # Add to PATH
-            $env:Path += ";C:\Program Files\RDB"
-            
-            # Verify
-            rdb --version
-            ```
-            
-            ---
-            
-            ## 🚀 Quick Start
-            
-            ```bash
-            # Initialize RDB
-            rdb init
-            
-            # Start server
-            rdb start
-            
-            # Create your first table
-            curl -X POST http://localhost:8080/query \
-              -H "Content-Type: application/json" \
-              -d '{
-                "CreateTable": {
-                  "database": "main",
-                  "table": "users",
-                  "columns": [
-                    {"name": "id", "type": "int", "primary_key": true},
-                    {"name": "name", "type": "string"}
-                  ]
-                }
-              }'
-            ```
-            
-            ---
-            
-            ## ✨ What's New
-            
-            ${{ steps.changelog.outputs.content }}
-            
-            ---
-            
-            ## 📊 System Requirements
-            
-            | Component | Minimum | Recommended |
-            |-----------|---------|-------------|
-            | **RAM** | 512 MB | 2 GB+ |
-            | **Disk** | 100 MB | 1 GB+ |
-            | **CPU** | 1 core | 4+ cores |
-            | **OS** | Linux 3.2+, macOS 10.12+, Windows 10+ | Latest |
-            
-            ---
-            
-            ## 🔧 Troubleshooting
-            
-            ### Common Issues
-            
-            #### "Address already in use"
-            ```bash
-            # Use different port
-            rdb start --port 9090
-            ```
-            
-            #### "Permission denied"
-            ```bash
-            # On Linux/macOS, ensure executable
-            chmod +x rdb
-            
-            # On Windows, run as Administrator
-            ```
-            
-            #### "Cannot connect to server"
-            ```bash
-            # Check if server is running
-            curl http://localhost:8080/
-            
-            # Check firewall settings
-            ```
-            
-            ### Get Help
-            - 📖 **Docs:** https://github.com/muhammad-fiaz/RDB/tree/main/docs
-            - 🐛 **Issues:** https://github.com/muhammad-fiaz/RDB/issues
-            - 💬 **Discussions:** https://github.com/muhammad-fiaz/RDB/discussions
-            
-            ---
-            
-            ## 📝 Changelog
-            
-            See [CHANGELOG.md](https://github.com/muhammad-fiaz/RDB/blob/main/CHANGELOG.md) for detailed changes.
-            
-            ---
-            
-            ## 📄 License
-            
-            Licensed under the Apache License 2.0 - see [LICENSE](https://github.com/muhammad-fiaz/RDB/blob/main/LICENSE) for details.
-            
-            ---
-            
-            **Full documentation:** https://github.com/muhammad-fiaz/RDB/tree/main/docs
-  build-linux:
-    name: Build Linux
-    needs: create-release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: stable
-
-      - name: Build
-        run: cargo build --release
-
-      - name: Upload artifact
-        uses: actions/upload-release-asset@v1
+          tag_name: ${{ github.event.release.tag_name }}
+          body_path: release_notes.md
+          files: |
+            artifacts/**/*.tar.gz
+            artifacts/**/*.zip
+          append_body: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./target/release/rdb
-          asset_name: rdb-linux-x86_64
-          asset_content_type: application/octet-stream
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEn }}
 
-  build-macos-intel:
-    name: Build macOS Intel
-    needs: create-release
-    runs-on: macos-13
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: stable
-
-      - name: Build
-        run: cargo build --release
-
-      - name: Upload artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./target/release/rdb
-          asset_name: rdb-macos-x86_64
-          asset_content_type: application/octet-stream
-
-  build-macos-arm:
-    name: Build macOS (ARM)
-    needs: create-release
-    runs-on: macos-14
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: stable
-
-      - name: Build
-        run: cargo build --release
-
-      - name: Upload artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./target/release/rdb
-          asset_name: rdb-macos-aarch64
-          asset_content_type: application/octet-stream
-
-  build-windows:
-    name: Build Windows
-    needs: create-release
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: stable
-
-      - name: Build
-        run: cargo build --release
-
-      - name: Upload artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./target/release/rdb.exe
-          asset_name: rdb-windows-x86_64.exe
-          asset_content_type: application/octet-stream
